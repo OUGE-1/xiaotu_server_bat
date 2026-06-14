@@ -1,0 +1,7 @@
+你的主程序目录/
+├── xiaotu_server.py
+├── server.jar
+├── Plugins_xiaotu/
+│   └── lyt_it_plugin.py
+└── lyt it/
+    └── main.exe
