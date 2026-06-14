@@ -1,0 +1,58 @@
+{
+  "help": {
+    "description": "显示帮助信息",
+    "command": null
+  },
+  "stop": {
+    "description": "停止服务器",
+    "command": "stop"
+  },
+  "save": {
+    "description": "保存世界",
+    "command": "save-all"
+  },
+  "list": {
+    "description": "列出在线玩家",
+    "command": "list"
+  },
+  "say": {
+    "description": "广播消息",
+    "command": "say {args}"
+  },
+  "kick": {
+    "description": "踢出玩家",
+    "command": "kick {args}"
+  },
+  "ban": {
+    "description": "封禁玩家",
+    "command": "ban {args}"
+  },
+  "op": {
+    "description": "给予管理员",
+    "command": "op {args}"
+  },
+  "gamemode": {
+    "description": "修改游戏模式",
+    "command": "gamemode {args}"
+  },
+  "time": {
+    "description": "设置时间",
+    "command": "time {args}"
+  },
+  "weather": {
+    "description": "设置天气",
+    "command": "weather {args}"
+  },
+  "tp": {
+    "description": "传送玩家",
+    "command": "tp {args}"
+  },
+  "give": {
+    "description": "给予物品",
+    "command": "give {args}"
+  },
+  "seed": {
+    "description": "查看世界种子",
+    "command": "seed"
+  }
+}
