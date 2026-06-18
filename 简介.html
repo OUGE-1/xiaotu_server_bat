@@ -1,0 +1,1097 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Minecraft 服务器管理器 · 项目报告</title>
+    <style>
+        /* 全局重置与基础 */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: #f5f7fa;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            color: #1e293b;
+            padding: 2rem 1.5rem;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1100px;
+            margin: 0 auto;
+            background: #ffffff;
+            border-radius: 24px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.08);
+            padding: 2.5rem 3rem;
+        }
+
+        /* 标题区 */
+        .header {
+            border-bottom: 2px solid #e9edf4;
+            padding-bottom: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .header h1 {
+            font-size: 2.4rem;
+            font-weight: 700;
+            letter-spacing: -0.5px;
+            background: linear-gradient(135deg, #0b3b5c, #2d7a9b);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            display: inline-block;
+        }
+
+        .header .sub {
+            font-size: 1rem;
+            color: #64748b;
+            margin-top: 0.3rem;
+            border-left: 4px solid #2d7a9b;
+            padding-left: 1rem;
+            background: #f8fafc;
+            border-radius: 0 8px 8px 0;
+            padding: 0.6rem 1.2rem;
+            display: inline-block;
+        }
+
+        /* 通用章节 */
+        .section {
+            margin-bottom: 2.8rem;
+        }
+
+        .section-title {
+            font-size: 1.8rem;
+            font-weight: 600;
+            margin-bottom: 1.2rem;
+            padding-bottom: 0.4rem;
+            border-bottom: 3px solid #e2e8f0;
+            color: #0f2b3d;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .section-title .badge {
+            background: #2d7a9b;
+            color: #fff;
+            font-size: 0.75rem;
+            font-weight: 500;
+            padding: 0.1rem 0.7rem;
+            border-radius: 20px;
+            margin-left: 0.8rem;
+        }
+
+        h3 {
+            font-size: 1.3rem;
+            font-weight: 600;
+            margin-top: 1.8rem;
+            margin-bottom: 0.8rem;
+            color: #1e3a5f;
+        }
+
+        h4 {
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-top: 1.5rem;
+            margin-bottom: 0.5rem;
+            color: #2c3e50;
+        }
+
+        p {
+            margin-bottom: 0.8rem;
+        }
+
+        ul,
+        ol {
+            margin: 0.6rem 0 1rem 1.8rem;
+        }
+
+        li {
+            margin-bottom: 0.3rem;
+        }
+
+        /* 表格样式 */
+        .table-wrap {
+            overflow-x: auto;
+            margin: 1rem 0 1.5rem 0;
+            border-radius: 12px;
+            border: 1px solid #e9edf4;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.95rem;
+            background: #fff;
+        }
+
+        th {
+            background: #f1f5f9;
+            color: #1e3a5f;
+            font-weight: 600;
+            padding: 0.75rem 1rem;
+            text-align: left;
+            border-bottom: 2px solid #dce2ec;
+        }
+
+        td {
+            padding: 0.7rem 1rem;
+            border-bottom: 1px solid #eef2f7;
+            vertical-align: top;
+        }
+
+        tr:last-child td {
+            border-bottom: none;
+        }
+
+        .table-wrap.feature-table td:first-child {
+            font-weight: 500;
+            color: #0b3b5c;
+            width: 30%;
+        }
+
+        /* 代码块 */
+        .code-block {
+            background: #1e293b;
+            color: #e2e8f0;
+            padding: 1rem 1.4rem;
+            border-radius: 12px;
+            font-family: 'Fira Code', 'JetBrains Mono', 'Cascadia Code', monospace;
+            font-size: 0.9rem;
+            overflow-x: auto;
+            margin: 0.8rem 0 1.2rem 0;
+            white-space: pre-wrap;
+            word-break: break-word;
+        }
+
+        .code-block .json-key {
+            color: #facc15;
+        }
+        .code-block .json-string {
+            color: #a3e635;
+        }
+        .code-block .json-punct {
+            color: #f8fafc;
+        }
+
+        /* 标签/高亮 */
+        .highlight-box {
+            background: #f1f9fe;
+            border-left: 5px solid #2d7a9b;
+            padding: 1rem 1.6rem;
+            border-radius: 8px;
+            margin: 1.2rem 0;
+        }
+
+        .highlight-box.win7 {
+            background: #fef9e7;
+            border-left-color: #d97706;
+        }
+
+        .highlight-box strong {
+            color: #0b3b5c;
+        }
+
+        .tag {
+            display: inline-block;
+            background: #dbeafe;
+            color: #1e3a8a;
+            font-size: 0.8rem;
+            padding: 0.1rem 0.7rem;
+            border-radius: 16px;
+            font-weight: 500;
+            margin-right: 0.3rem;
+        }
+
+        .tag.green {
+            background: #dcfce7;
+            color: #166534;
+        }
+
+        .tag.orange {
+            background: #ffedd5;
+            color: #9a3412;
+        }
+
+        /* 版本时间线 */
+        .version-item {
+            border-bottom: 1px dashed #e2e8f0;
+            padding-bottom: 1.2rem;
+            margin-bottom: 1.2rem;
+        }
+
+        .version-item:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+        }
+
+        .version-header {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: baseline;
+            gap: 0.8rem 1.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .version-name {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: #0b3b5c;
+        }
+
+        .version-tag {
+            background: #e9edf4;
+            padding: 0.15rem 0.9rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 500;
+            color: #334155;
+        }
+
+        .version-tag.test {
+            background: #fef3c7;
+            color: #92400e;
+        }
+
+        .version-tag.stable {
+            background: #dcfce7;
+            color: #166534;
+        }
+
+        .version-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0.8rem 2rem;
+            margin-top: 0.4rem;
+        }
+
+        @media (max-width: 640px) {
+            .version-content {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .version-content .col {
+            background: #fafbfc;
+            padding: 0.6rem 1rem;
+            border-radius: 8px;
+        }
+
+        .version-content .col strong {
+            display: block;
+            color: #1e3a5f;
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 0.3rem;
+            border-bottom: 1px solid #e9edf4;
+            padding-bottom: 0.2rem;
+        }
+
+        .version-content ul {
+            margin: 0.3rem 0 0 1.2rem;
+        }
+
+        .version-content ul li {
+            font-size: 0.92rem;
+        }
+
+        /* 系统要求网格 */
+        .sys-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+            gap: 1.2rem;
+            margin: 1rem 0 1.5rem 0;
+        }
+
+        .sys-card {
+            background: #f8fafc;
+            border-radius: 12px;
+            padding: 1rem 1.2rem;
+            border: 1px solid #e9edf4;
+        }
+
+        .sys-card .label {
+            font-weight: 600;
+            color: #0b3b5c;
+            display: block;
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 0.4px;
+            margin-bottom: 0.2rem;
+        }
+
+        .sys-card .value {
+            font-size: 1rem;
+        }
+
+        /* ===== UI 模拟样式 ===== */
+        .ui-simulator {
+            margin: 1.5rem 0 2rem 0;
+            display: flex;
+            justify-content: center;
+        }
+
+        .window {
+            width: 780px;
+            max-width: 100%;
+            background: #ececec;
+            border-radius: 10px 10px 8px 8px;
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.25), 0 0 0 1px rgba(0, 0, 0, 0.1);
+            font-family: 'Segoe UI', Tahoma, sans-serif;
+            font-size: 13px;
+            color: #1e1e1e;
+            overflow: hidden;
+            /* 模仿 Tkinter 经典灰色 */;
+        }
+
+        /* 标题栏 */
+        .window-titlebar {
+            background: #d0d0d0;
+            padding: 6px 12px;
+            display: flex;
+            align-items: center;
+            border-bottom: 1px solid #b0b0b0;
+            user-select: none;
+            cursor: default;
+        }
+
+        .window-titlebar .icon {
+            font-size: 16px;
+            margin-right: 8px;
+        }
+
+        .window-titlebar .title {
+            font-weight: 600;
+            font-size: 14px;
+            color: #1e1e1e;
+            flex: 1;
+        }
+
+        .window-titlebar .controls {
+            display: flex;
+            gap: 6px;
+        }
+
+        .window-titlebar .controls span {
+            display: inline-block;
+            width: 14px;
+            height: 14px;
+            border-radius: 50%;
+            background: #b0b0b0;
+            border: 1px solid #9a9a9a;
+        }
+
+        .window-titlebar .controls span.close {
+            background: #e74c3c;
+            border-color: #c0392b;
+        }
+        .window-titlebar .controls span.minimize {
+            background: #f1c40f;
+            border-color: #d4ac0d;
+        }
+        .window-titlebar .controls span.maximize {
+            background: #2ecc71;
+            border-color: #27ae60;
+        }
+
+        /* 主体布局: 左(控制+日志) + 右(玩家+玩具) */
+        .window-body {
+            display: flex;
+            flex-wrap: wrap;
+            padding: 8px;
+            gap: 8px;
+            background: #ececec;
+            min-height: 420px;
+        }
+
+        .window-left {
+            flex: 2;
+            min-width: 280px;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .window-right {
+            flex: 1;
+            min-width: 180px;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        /* 控制区域 */
+        .control-panel {
+            background: #e3e3e3;
+            border: 1px solid #c0c0c0;
+            border-radius: 4px;
+            padding: 8px 10px;
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 6px 12px;
+        }
+
+        .control-panel .label {
+            font-weight: 500;
+            font-size: 12px;
+            color: #2c3e50;
+        }
+
+        .control-panel .jar-select {
+            background: white;
+            border: 1px solid #a0a0a0;
+            border-radius: 3px;
+            padding: 2px 6px;
+            font-size: 12px;
+            flex: 1;
+            min-width: 120px;
+        }
+
+        .control-panel .mem-slider {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .control-panel .mem-slider input[type="range"] {
+            width: 80px;
+            height: 4px;
+            background: #b0b0b0;
+            border-radius: 2px;
+            -webkit-appearance: none;
+            appearance: none;
+        }
+
+        .control-panel .mem-slider input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 12px;
+            height: 12px;
+            background: #3a6ea5;
+            border-radius: 50%;
+            cursor: pointer;
+            border: 1px solid #2c3e50;
+        }
+
+        .control-panel .btn-group {
+            display: flex;
+            gap: 6px;
+            margin-left: auto;
+        }
+
+        .btn {
+            background: #e0e0e0;
+            border: 1px solid #a0a0a0;
+            border-radius: 4px;
+            padding: 4px 14px;
+            font-size: 12px;
+            font-weight: 500;
+            cursor: default;
+            color: #1e1e1e;
+            box-shadow: 0 1px 0 #ffffff inset, 0 1px 2px rgba(0,0,0,0.1);
+            transition: none;
+        }
+
+        .btn.start {
+            background: #6f9e6f;
+            border-color: #3d6b3d;
+            color: white;
+            box-shadow: 0 1px 0 #8fbe8f inset;
+        }
+
+        .btn.stop {
+            background: #c75c5c;
+            border-color: #8f3a3a;
+            color: white;
+            box-shadow: 0 1px 0 #e07a7a inset;
+        }
+
+        /* 日志区域 */
+        .log-area {
+            background: #1e1e1e;
+            border: 1px solid #3a3a3a;
+            border-radius: 4px;
+            padding: 6px 8px;
+            height: 200px;
+            overflow-y: auto;
+            font-family: 'Consolas', 'Courier New', monospace;
+            font-size: 12px;
+            color: #d4d4d4;
+            line-height: 1.5;
+            flex: 1;
+        }
+
+        .log-area .log-line {
+            white-space: pre-wrap;
+            word-break: break-all;
+            border-bottom: 1px solid #2a2a2a;
+            padding: 1px 0;
+        }
+
+        .log-area .log-line .time {
+            color: #7a9bcd;
+        }
+        .log-area .log-line .info {
+            color: #b5cea8;
+        }
+        .log-area .log-line .warn {
+            color: #dcdcaa;
+        }
+        .log-area .log-line .error {
+            color: #f44747;
+        }
+
+        /* 命令输入 */
+        .cmd-input {
+            display: flex;
+            gap: 4px;
+            margin-top: 2px;
+        }
+
+        .cmd-input input[type="text"] {
+            flex: 1;
+            background: white;
+            border: 1px solid #a0a0a0;
+            border-radius: 3px;
+            padding: 4px 8px;
+            font-size: 12px;
+            font-family: 'Consolas', monospace;
+        }
+
+        .cmd-input .btn-send {
+            background: #e0e0e0;
+            border: 1px solid #a0a0a0;
+            border-radius: 3px;
+            padding: 4px 14px;
+            font-size: 12px;
+            cursor: default;
+        }
+
+        /* 右侧玩家/玩具 */
+        .panel-box {
+            background: #e3e3e3;
+            border: 1px solid #c0c0c0;
+            border-radius: 4px;
+            padding: 6px 8px;
+        }
+
+        .panel-box .panel-title {
+            font-weight: 600;
+            font-size: 12px;
+            color: #2c3e50;
+            margin-bottom: 4px;
+            border-bottom: 1px solid #c0c0c0;
+            padding-bottom: 2px;
+        }
+
+        .panel-box .list-box {
+            background: white;
+            border: 1px solid #a0a0a0;
+            border-radius: 3px;
+            padding: 4px 6px;
+            height: 90px;
+            overflow-y: auto;
+            font-size: 12px;
+            line-height: 1.6;
+        }
+
+        .panel-box .list-box .item {
+            padding: 1px 4px;
+            border-radius: 2px;
+            cursor: default;
+        }
+
+        .panel-box .list-box .item.selected {
+            background: #c7dff7;
+        }
+
+        .panel-box .action-row {
+            display: flex;
+            gap: 4px;
+            margin-top: 4px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .panel-box .action-row .btn-small {
+            background: #e0e0e0;
+            border: 1px solid #a0a0a0;
+            border-radius: 3px;
+            padding: 2px 12px;
+            font-size: 11px;
+            cursor: default;
+        }
+
+        .panel-box .action-row .btn-small.gift {
+            background: #d4b48c;
+            border-color: #a8875e;
+        }
+
+        /* 底部状态栏 */
+        .window-statusbar {
+            background: #d0d0d0;
+            border-top: 1px solid #b0b0b0;
+            padding: 3px 12px;
+            font-size: 12px;
+            color: #1e1e1e;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .window-statusbar .status {
+            font-weight: 500;
+        }
+
+        .window-statusbar .status.running {
+            color: #1e7e34;
+        }
+
+        .window-statusbar .status.stopped {
+            color: #a13d3d;
+        }
+
+        /* 响应式调整 */
+        @media (max-width: 600px) {
+            .window-body {
+                flex-direction: column;
+            }
+            .window-right {
+                flex-direction: row;
+                flex-wrap: wrap;
+            }
+            .window-right .panel-box {
+                flex: 1;
+                min-width: 120px;
+            }
+            .control-panel {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            .control-panel .btn-group {
+                margin-left: 0;
+                justify-content: flex-end;
+            }
+        }
+
+        /* 底部 */
+        .footer {
+            margin-top: 2.5rem;
+            padding-top: 1.2rem;
+            border-top: 2px solid #e9edf4;
+            text-align: center;
+            color: #94a3b8;
+            font-size: 0.9rem;
+        }
+
+        /* 响应式容器 */
+        @media (max-width: 768px) {
+            body {
+                padding: 1rem 0.8rem;
+            }
+            .container {
+                padding: 1.5rem 1.2rem;
+            }
+            .header h1 {
+                font-size: 1.8rem;
+            }
+            .section-title {
+                font-size: 1.4rem;
+            }
+            .version-content {
+                grid-template-columns: 1fr;
+            }
+            .sys-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .sys-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+
+        <!-- 头部 -->
+        <div class="header">
+            <h1>⛏️ Minecraft 服务器管理器</h1>
+            <div class="sub"><code>xiaotu_server.py</code> · 完整项目报告</div>
+        </div>
+
+        <!-- ==================== 项目概述 ==================== -->
+        <div class="section">
+            <div class="section-title">📌 项目概述</div>
+            <p><strong>xiaotu_server.py</strong> 是一款基于 Python 标准库和 Tkinter 图形界面框架开发的 <strong>Minecraft 服务器图形化管理工具</strong>。它通过可视化的操作面板，帮助服主轻松完成服务器的启动/停止、控制台交互、玩家管理、快捷命令配置及趣味互动等操作。</p>
+            <p>该工具的设计初衷是<strong>降低服务器管理门槛</strong>，让即使不熟悉命令行操作的玩家，也能像使用桌面软件一样便捷地运维自己的 Minecraft 服务器。它仅依赖 <strong>Python 3.6+</strong> 和 <strong>Java 8+</strong> 环境，无需安装任何第三方库，真正做到开箱即用、绿色便携。</p>
+        </div>
+
+        <!-- ==================== UI 模拟 ==================== -->
+        <div class="section">
+            <div class="section-title">🖥️ UI 模拟预览</div>
+            <p>下方为 <code>xiaotu_server.py</code> 主界面的静态模拟，展示了服务器控制、日志输出、玩家与玩具面板等核心区域。</p>
+
+            <div class="ui-simulator">
+                <div class="window">
+                    <!-- 标题栏 -->
+                    <div class="window-titlebar">
+                        <span class="icon">🧊</span>
+                        <span class="title">Minecraft 服务器管理器</span>
+                        <div class="controls">
+                            <span class="minimize"></span>
+                            <span class="maximize"></span>
+                            <span class="close"></span>
+                        </div>
+                    </div>
+
+                    <!-- 主体 -->
+                    <div class="window-body">
+                        <!-- 左侧 -->
+                        <div class="window-left">
+                            <!-- 控制面板 -->
+                            <div class="control-panel">
+                                <span class="label">服务端 JAR</span>
+                                <span class="jar-select">server.jar</span>
+                                <div class="mem-slider">
+                                    <span class="label">内存</span>
+                                    <input type="range" min="512" max="4096" value="1024" step="128" disabled>
+                                    <span style="font-size:11px;">1024 MB</span>
+                                </div>
+                                <div class="btn-group">
+                                    <span class="btn start">启动</span>
+                                    <span class="btn stop">停止</span>
+                                </div>
+                            </div>
+
+                            <!-- 日志区域 -->
+                            <div class="log-area">
+                                <div class="log-line"><span class="time">[15:32:18]</span> <span class="info">Starting Minecraft server...</span></div>
+                                <div class="log-line"><span class="time">[15:32:20]</span> <span class="info">Loading properties</span></div>
+                                <div class="log-line"><span class="time">[15:32:22]</span> <span class="warn">[WARN]</span> <span class="warn">Using default UUID generator</span></div>
+                                <div class="log-line"><span class="time">[15:32:25]</span> <span class="info">Done (3.2s)! For help, type "help"</span></div>
+                                <div class="log-line"><span class="time">[15:32:30]</span> <span class="info">玩家 Steve 加入了游戏</span></div>
+                                <div class="log-line"><span class="time">[15:32:45]</span> <span class="info">玩家 Alex 加入了游戏</span></div>
+                                <div class="log-line"><span class="time">[15:33:01]</span> <span class="error">[ERROR]</span> <span class="error">Connection timed out: /192.168.1.10</span></div>
+                            </div>
+
+                            <!-- 命令输入 -->
+                            <div class="cmd-input">
+                                <input type="text" value="/say Hello everyone!" disabled>
+                                <span class="btn-send">发送</span>
+                            </div>
+                        </div>
+
+                        <!-- 右侧 -->
+                        <div class="window-right">
+                            <!-- 玩家列表 -->
+                            <div class="panel-box">
+                                <div class="panel-title">👤 在线玩家</div>
+                                <div class="list-box">
+                                    <div class="item selected">Steve</div>
+                                    <div class="item">Alex</div>
+                                    <div class="item">Creeper</div>
+                                    <div class="item">Herobrine</div>
+                                </div>
+                                <div class="action-row">
+                                    <span class="btn-small">复制名称</span>
+                                    <span class="btn-small" style="background:#e0d0b0;">查看UUID</span>
+                                </div>
+                            </div>
+
+                            <!-- 玩具列表 -->
+                            <div class="panel-box">
+                                <div class="panel-title">🧸 玩具</div>
+                                <div class="list-box">
+                                    <div class="item selected">⚔️ 钻石剑</div>
+                                    <div class="item">🏹 三叉戟</div>
+                                    <div class="item">🛡️ 盾牌</div>
+                                    <div class="item">🎆 烟花</div>
+                                </div>
+                                <div class="action-row">
+                                    <span class="btn-small gift">🎁 赠送</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 状态栏 -->
+                    <div class="window-statusbar">
+                        <span>状态: <span class="status running">● 运行中</span></span>
+                        <span>玩家: 3/20</span>
+                    </div>
+                </div>
+            </div>
+            <p style="font-size:0.9rem; color:#64748b; text-align:center;">* 模拟界面仅供视觉参考，不包含实际交互功能</p>
+        </div>
+
+        <!-- ==================== 功能介绍 ==================== -->
+        <div class="section">
+            <div class="section-title">🧩 完整功能介绍</div>
+
+            <h3>1. 服务器生命周期管理（核心）</h3>
+            <div class="table-wrap">
+                <table>
+                    <thead>
+                        <tr><th>功能</th><th>说明</th></tr>
+                    </thead>
+                    <tbody>
+                        <tr><td><strong>启动服务器</strong></td><td>通过文件对话框选择服务端 JAR 文件（如 <code>server.jar</code>、<code>paper.jar</code> 等），设置 <code>-Xms</code>（初始内存）和 <code>-Xmx</code>（最大内存）后一键启动。</td></tr>
+                        <tr><td><strong>停止服务器</strong></td><td>一键优雅终止服务端进程，避免数据损坏。</td></tr>
+                        <tr><td><strong>状态监控</strong></td><td>底部状态栏实时显示"未启动 / 启动中 / 运行中"三种状态。</td></tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <h3>2. 交互式控制台</h3>
+            <ul>
+                <li><strong>实时日志输出</strong>：服务器运行时的所有日志（玩家进出、系统消息、报错信息）实时滚动显示，并自动追随最新一行。</li>
+                <li><strong>命令输入</strong>：在下方的输入框中输入任意 Minecraft 命令（如 <code>/op 玩家名</code>、<code>/gamemode creative</code>），点击"发送"或按回车键即可发送。服务器未启动时输入框自动禁用，防止误操作。</li>
+            </ul>
+
+            <h3>3. 快捷命令系统</h3>
+            <ul>
+                <li>通过编辑同目录下的 <strong><code>quick_commands.json</code></strong> 文件，可自定义一组常用命令按钮。</li>
+                <li>示例配置：
+                    <div class="code-block">{
+                        <span class="json-key">"保存世界"</span>: <span class="json-string">"save-all"</span>,
+                        <span class="json-key">"在线列表"</span>: <span class="json-string">"list"</span>,
+                        <span class="json-key">"欢迎消息"</span>: <span class="json-string">"say 欢迎来到服务器！"</span>
+                    }</div>
+                </li>
+                <li>程序启动时自动加载并生成按钮，点击即可一键发送命令。若 JSON 文件格式错误或缺失，程序会优雅忽略并继续运行。</li>
+            </ul>
+
+            <h3>4. 玩家管理面板</h3>
+            <ul>
+                <li><strong>在线玩家列表</strong>：自动解析 <code>list</code> 命令输出，每 5 秒动态刷新，实时反映玩家进出情况。</li>
+                <li><strong>右键快捷操作</strong>：在玩家名称上右键点击，弹出菜单支持快速复制玩家名到剪贴板。</li>
+            </ul>
+
+            <h3>5. 玩具互动面板（特色彩蛋功能）</h3>
+            <ul>
+                <li>预定义了一批 Minecraft 特色物品（如钻石剑、三叉戟、弩、盾牌、烟花火箭等）。</li>
+                <li><strong>操作流程</strong>：选中一名在线玩家 → 选中一个玩具 → 点击"赠送"按钮 → 程序自动构造并发送 <code>/say 服务器赠送 XXX 一个[玩具名称]！</code> 消息到游戏内聊天栏。</li>
+                <li>适用于趣味互动、小游戏奖励、欢迎新人等场景。</li>
+            </ul>
+
+            <h3>6. server.properties 配置编辑器</h3>
+            <ul>
+                <li>内置图形化的 <code>server.properties</code> 文件编辑器，无需手动查找文件。</li>
+                <li>支持修改 <code>max-players</code>、<code>motd</code>、<code>gamemode</code>、<code>difficulty</code> 等全部服务端参数，修改后可直接保存。</li>
+            </ul>
+
+            <h3>7. 辅助功能</h3>
+            <ul>
+                <li><strong>跨平台支持</strong>：使用 <code>pathlib.Path</code> 处理路径，兼容 Windows / Linux / macOS。</li>
+                <li><strong>窗口关闭保护</strong>：关闭主窗口时自动终止仍在运行的服务器进程，防止后台残留。</li>
+                <li><strong>异常容错</strong>：对文件读写、子进程管理、JSON 解析等关键操作均做了异常捕获，避免因小错误导致程序闪退。</li>
+            </ul>
+        </div>
+
+        <!-- ==================== 版本更新历史 ==================== -->
+        <div class="section">
+            <div class="section-title">📜 版本更新历史 <span class="badge">含问题修复</span></div>
+
+            <!-- V1.0 -->
+            <div class="version-item">
+                <div class="version-header">
+                    <span class="version-name">V1.0</span>
+                    <span class="version-tag">初始版本</span>
+                    <span style="font-size:0.9rem; color:#64748b;">核心框架</span>
+                </div>
+                <div class="version-content">
+                    <div class="col">
+                        <strong>✨ 新增功能</strong>
+                        <ul>
+                            <li>实现服务端核心控制：选择 JAR 文件、设置内存参数、一键启动/停止</li>
+                            <li>建立图形化控制台，支持实时日志显示与命令输入</li>
+                            <li>采用多线程处理服务端输出，避免界面卡顿</li>
+                            <li>底部状态栏显示服务器运行状态</li>
+                        </ul>
+                    </div>
+                    <div class="col">
+                        <strong>🐛 问题修复</strong>
+                        <ul>
+                            <li>修复启动时因文件路径含空格或中文导致的启动失败问题</li>
+                            <li>修复停止服务器时进程残留问题（增加超时强制结束逻辑）</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- V1.1 -->
+            <div class="version-item">
+                <div class="version-header">
+                    <span class="version-name">V1.1</span>
+                    <span class="version-tag">功能扩展</span>
+                    <span style="font-size:0.9rem; color:#64748b;">配置增强</span>
+                </div>
+                <div class="version-content">
+                    <div class="col">
+                        <strong>✨ 新增功能</strong>
+                        <ul>
+                            <li>快捷命令系统：从 <code>quick_commands.json</code> 加载自定义命令按钮</li>
+                            <li>集成 <code>server.properties</code> 图形化编辑器</li>
+                            <li>使用 <code>pathlib.Path</code> 增强跨平台兼容性</li>
+                        </ul>
+                    </div>
+                    <div class="col">
+                        <strong>🐛 问题修复</strong>
+                        <ul>
+                            <li>修复配置文件编辑保存时因 UTF-8 BOM 导致的乱码问题</li>
+                            <li>修复快捷命令 JSON 格式错误时程序崩溃的问题（增加异常捕获）</li>
+                            <li>修复启动后状态栏偶尔不更新的问题（改进状态轮询机制）</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- V1.2 -->
+            <div class="version-item">
+                <div class="version-header">
+                    <span class="version-name">V1.2</span>
+                    <span class="version-tag">玩家与玩具</span>
+                    <span style="font-size:0.9rem; color:#64748b;">趣味互动</span>
+                </div>
+                <div class="version-content">
+                    <div class="col">
+                        <strong>✨ 新增功能</strong>
+                        <ul>
+                            <li>在线玩家列表：动态刷新显示在线玩家</li>
+                            <li>玩具面板：选中玩家+玩具，一键发送 <code>/say</code> 赠送消息</li>
+                            <li>玩家列表右键菜单：支持复制玩家名</li>
+                        </ul>
+                    </div>
+                    <div class="col">
+                        <strong>🐛 问题修复</strong>
+                        <ul>
+                            <li>修复玩家列表刷新不及时，显示已离线玩家的问题（增加每5秒定时刷新）</li>
+                            <li>修复玩家名含特殊字符时玩具消息发送失败的问题（增加转义处理）</li>
+                            <li>修复控制台在服务器未启动时仍可输入命令导致报错的问题（增加启动状态校验）</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- V1.3 -->
+            <div class="version-item">
+                <div class="version-header">
+                    <span class="version-name">V1.3</span>
+                    <span class="version-tag test">内部测试版</span>
+                    <span style="font-size:0.9rem; color:#64748b;">未正式发布</span>
+                </div>
+                <div class="version-content">
+                    <div class="col">
+                        <strong>✨ 新增功能（计划）</strong>
+                        <ul>
+                            <li>玩家列表右键菜单增加"查看UUID"选项</li>
+                            <li>设计通过调用 <code>play_uuid.py</code> 脚本，经 Mojang API 获取 UUID</li>
+                        </ul>
+                    </div>
+                    <div class="col">
+                        <strong>🐛 测试中发现的问题修复</strong>
+                        <ul>
+                            <li>修复外部脚本调用时的路径依赖问题</li>
+                            <li>修复因 Mojang API 限流导致查询超时、界面无响应的问题（增加超时与异步处理）</li>
+                            <li>修复脚本返回 UUID 格式错误的问题（增加 JSON 解析容错）</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- V2.0 -->
+            <div class="version-item">
+                <div class="version-header">
+                    <span class="version-name">V2.0</span>
+                    <span class="version-tag stable">最终稳定版</span>
+                    <span style="font-size:0.9rem; color:#64748b;">移除实验性功能</span>
+                </div>
+                <div class="version-content">
+                    <div class="col">
+                        <strong>📦 更新内容</strong>
+                        <ul>
+                            <li>移除了 <code>play_uuid.py</code> 相关的 UUID 查询调用代码，精简程序核心功能。</li>
+                        </ul>
+                    </div>
+                    <div class="col">
+                        <strong>🐛 问题修复</strong>
+                        <ul>
+                            <li>彻底解决因外部脚本缺失或 API 变动导致的启动崩溃问题（移除不稳定依赖）</li>
+                            <li>修复在低分辨率屏幕下界面元素重叠的问题（调整布局和最小尺寸）</li>
+                            <li>修复控制台日志滚动条不能自动跟随到底部的问题（改为 <code>see(END)</code> 实现）</li>
+                            <li>修复关闭窗口时未完全释放子进程，导致后台 Java 进程残留的问题（完善窗口关闭事件清理）</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==================== 系统与环境要求 ==================== -->
+        <div class="section">
+            <div class="section-title">🖥️ 系统与环境要求</div>
+
+            <div class="sys-grid">
+                <div class="sys-card"><span class="label">操作系统</span><span class="value">Windows (7 SP1+), Linux, macOS</span></div>
+                <div class="sys-card"><span class="label">Python 版本</span><span class="value">3.6 及以上（Windows 7 请用 3.8.x）</span></div>
+                <div class="sys-card"><span class="label">Java 环境</span><span class="value">Java 8 或更高版本</span></div>
+                <div class="sys-card"><span class="label">依赖库</span><span class="value">仅 Python 标准库（无需 pip）</span></div>
+                <div class="sys-card"><span class="label">磁盘权限</span><span class="value">程序目录需读写权限</span></div>
+                <div class="sys-card"><span class="label">网络</span><span class="value">可选（仅 UUID 查询需要，已移除）</span></div>
+            </div>
+
+            <h3>📌 Windows 7 特别说明</h3>
+            <div class="highlight-box win7">
+                <p><strong>⚠️ 关键兼容性要点：</strong></p>
+                <ul>
+                    <li><strong>系统补丁：</strong>必须安装 <strong>Windows 7 Service Pack 1 (SP1)</strong>。</li>
+                    <li><strong>Python 版本：</strong>务必使用 <strong>Python 3.8.x</strong>（最新小版本），<strong>不支持 3.9 及更高版本</strong>。</li>
+                    <li><strong>Java 版本：</strong>推荐 <strong>Java 8 Update 20 (8u20)</strong> 或更新版本。</li>
+                    <li><strong>其他：</strong>安装路径避免包含空格和中文字符；安装 Python 时勾选 <strong>"Add Python to PATH"</strong>。</li>
+                </ul>
+            </div>
+
+            <h3>💾 硬件建议（运行 Minecraft 服务端）</h3>
+            <div class="table-wrap">
+                <table>
+                    <thead>
+                        <tr><th>项目</th><th>最低要求</th><th>推荐配置</th></tr>
+                    </thead>
+                    <tbody>
+                        <tr><td>内存（RAM）</td><td>1GB 可用</td><td>2GB+（视模组和玩家数量而定）</td></tr>
+                        <tr><td>CPU</td><td>单核 2.0GHz+</td><td>多核 3.0GHz+</td></tr>
+                        <tr><td>硬盘</td><td>100MB+</td><td>视世界大小而定</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- ==================== 总结 ==================== -->
+        <div class="section">
+            <div class="section-title">🎯 总结</div>
+            <p><strong>xiaotu_server.py</strong> 从最初基础的启动器，逐步演变为集<strong>图形化控制台、快捷命令面板、玩家管理、玩具彩蛋互动、配置文件编辑</strong>于一体的综合性服务器管理工具。开发过程中曾尝试集成 UUID 查询功能，但最终为确保稳定性和易用性，选择移除了这一依赖外部 API 的模块。</p>
+            <p>该工具特别适合：</p>
+            <ul>
+                <li><strong>新手服主</strong>快速上手管理服务器</li>
+                <li><strong>小型私人服务器</strong>日常运维</li>
+                <li><strong>与朋友联机</strong>时进行趣味互动</li>
+            </ul>
+            <p>其"仅依赖 Python 标准库 + Java 运行环境"的轻量设计，使其在 Windows 7/10/11、Linux、macOS 等主流平台上均可轻松部署运行。</p>
+        </div>
+
+        <!-- 底部 -->
+        <div class="footer">
+            Minecraft 服务器管理器 · 项目报告 &mdash; 基于 <code>xiaotu_server.py</code> 源码分析
+        </div>
+
+    </div>
+</body>
+</html>
