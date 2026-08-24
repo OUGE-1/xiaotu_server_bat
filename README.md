@@ -1,4 +1,4 @@
-# 🐰 小兔服务器启动器 · `server_bat.exe`
+# 小土服务器启动器 · `server_bat.exe`
 
 [![GitHub release](https://img.shields.io/github/v/release/OUGE-1/xiaotu_server_bat_exe?style=flat-square)](https://github.com/OUGE-1/xiaotu_server_bat_exe/releases)
 [![GitHub license](https://img.shields.io/github/license/OUGE-1/xiaotu_server_bat_exe?style=flat-square)](LICENSE)
