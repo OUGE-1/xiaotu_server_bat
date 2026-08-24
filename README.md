@@ -201,6 +201,6 @@ pip install psutil pyinstaller
 pyinstaller --onefile --windowed --name server_bat a8.py
 ```
 🤝 贡献与反馈
-提交 Bug 或建议：Issues
+提交 Bug 或建议：[Issues](https://github.com/OUGE-1/xiaotu_server_bat/issues)
 
 点个 ⭐ 是对项目最大的支持！
