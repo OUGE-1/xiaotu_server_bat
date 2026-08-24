@@ -191,6 +191,7 @@ Q：杀毒软件报毒？
 ```bash
 git clone https://github.com/OUGE-1/xiaotu_server_bat.git
 cd xiaotu_server_bat
+pip install psutil
 ```
 > 💡 **只想开服，不想折腾？**  
 > 直接前往 [Releases](https://github.com/OUGE-1/xiaotu_server_bat_exe/releases) 下载 `server_bat.exe` 即可使用，无需克隆仓库。
