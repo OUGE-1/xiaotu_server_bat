@@ -126,7 +126,7 @@
 ```
 保存后重启程序，在界面中点击对应按钮即可一键发送命令。
 
-服务器设置
+### 服务器设置
 点击菜单栏 「设置 → 服务器设置」，可以配置：
 
 
@@ -154,7 +154,8 @@
 
 查看备份详情
 
-❓ 常见问题
+## ❓ 常见问题
+
 Q：启动时提示找不到 server.jar 怎么办？
 
 确保 server_bat.exe 与你的服务端核心文件放在同一目录。如果文件名不是 server.jar，点击 「文件 → 选择服务端 JAR」 手动选择即可。
@@ -183,10 +184,19 @@ Q：杀毒软件报毒？
 
 本程序为开源项目，代码完全公开透明。报毒属于误报（因打包为 exe 且涉及进程操作），请添加信任或查看源码自行编译。
 
+## 📥 获取项目
+
+如果你想在本地修改源码或自行编译，请克隆源代码仓库：
+
+```bash
+git clone https://github.com/OUGE-1/xiaotu_server_bat.git
+cd xiaotu_server_bat
+```
+> 💡 **只想开服，不想折腾？**  
+> 直接前往 [Releases](https://github.com/OUGE-1/xiaotu_server_bat_exe/releases) 下载 `server_bat.exe` 即可使用，无需克隆仓库。
 📝 从源码构建
-源码仓库： [OUGE-1/xiaotu_server_bat](https://github.com/OUGE-1/xiaotu_server_bat_exe) 
-```text
-bash
+源码仓库： [OUGE-1/xiaotu_server_bat](https://github.com/OUGE-1/xiaotu_server_bat) 
+```bash
 pip install psutil pyinstaller
 pyinstaller --onefile --windowed --name server_bat a8.py
 ```
