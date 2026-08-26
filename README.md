@@ -36,10 +36,11 @@
 
 如果 GitHub 访问较慢，可使用蓝奏云备用链接：
 
-| 渠道 | 链接 |
-|---|---|
-| 蓝奏云 | https://wwapl.lanzout.com/b016kvs33e |
-密码：1234
+| 渠道 | 链接 | 密码 |
+|---|---|---|
+| 蓝奏云 | https://wwapl.lanzout.com/b016kvs33e | 1234 |
+| 蓝奏云 | https://wwapl.lanzout.com/b016kvs33e | 1234 |
+
 ---
 
 ## 🚀 快速开始
