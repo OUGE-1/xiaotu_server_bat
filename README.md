@@ -39,7 +39,7 @@
 | 渠道 | 链接 | 密码 |
 |---|---|---|
 | 蓝奏云 | https://wwapl.lanzout.com/b016kvs33e | 1234 |
-| 蓝奏云 | https://wwapl.lanzout.com/b016kvs33e | 1234 |
+| 蓝奏云 | https://wwapl.lanzout.com/iOYKl44ph1vi | 1234 |
 
 ---
 
