@@ -1,4 +1,4 @@
-# 🐰 小兔服务器启动器 · `server_bat.exe`
+# 小土服务器启动器 · `server_bat.exe`
 
 [![GitHub release](https://img.shields.io/github/v/release/OUGE-1/xiaotu_server_bat_exe?style=flat-square)](https://github.com/OUGE-1/xiaotu_server_bat_exe/releases)
 [![GitHub license](https://img.shields.io/github/license/OUGE-1/xiaotu_server_bat_exe?style=flat-square)](LICENSE)
@@ -39,7 +39,7 @@
 | 渠道 | 链接 |
 |---|---|
 | 蓝奏云 | https://wwapl.lanzout.com/b016kvs33e |
-
+密码：1234
 ---
 
 ## 🚀 快速开始
@@ -191,6 +191,7 @@ Q：杀毒软件报毒？
 ```bash
 git clone https://github.com/OUGE-1/xiaotu_server_bat.git
 cd xiaotu_server_bat
+pip install psutil
 ```
 > 💡 **只想开服，不想折腾？**  
 > 直接前往 [Releases](https://github.com/OUGE-1/xiaotu_server_bat_exe/releases) 下载 `server_bat.exe` 即可使用，无需克隆仓库。
@@ -201,6 +202,6 @@ pip install psutil pyinstaller
 pyinstaller --onefile --windowed --name server_bat a8.py
 ```
 🤝 贡献与反馈
-提交 Bug 或建议：Issues
+提交 Bug 或建议：[Issues](https://github.com/OUGE-1/xiaotu_server_bat/issues)
 
 点个 ⭐ 是对项目最大的支持！
